@@ -16,6 +16,58 @@ docker-compose up -d
 open http://localhost:3000
 ```
 
+### 🌐 Service Access Points
+
+Once the platform is running, you can access all services through these URLs:
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **OpenWebUI** | [http://localhost:3000](http://localhost:3000) | Main AI assistant interface |
+| **Ollama API** | [http://localhost:11434](http://localhost:11434) | Local model serving API |
+| **PostgreSQL** | `localhost:5432` | Primary database (admin tools required) |
+| **Redis** | `localhost:6379` | Cache and session storage |
+| **Qdrant Dashboard** | [http://localhost:6333/dashboard](http://localhost:6333/dashboard) | Vector database interface |
+| **Neo4j Browser** | [http://localhost:7474](http://localhost:7474) | Graph database interface |
+| **Nginx Proxy** | [http://localhost:8081](http://localhost:8081) | Load balancer and SSL termination |
+
+### 🔐 Default Credentials
+
+| Service | Username | Password |
+|---------|----------|----------|
+| **OpenWebUI** | *Your registration* | *Your password* |
+| **Neo4j** | `neo4j` | `password` |
+| **PostgreSQL** | `postgres` | `postgres` |
+
+### 📊 Production Services (docker-compose.prod.yml)
+
+Additional services available in production mode:
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **Grafana** | [http://localhost:3001](http://localhost:3001) | Analytics dashboards (`admin`/`admin123`) |
+| **Prometheus** | [http://localhost:9090](http://localhost:9090) | Metrics collection |
+| **LightLLM** | [http://localhost:8000](http://localhost:8000) | High-performance model serving |
+| **GraphRAG Processor** | [http://localhost:8001](http://localhost:8001) | Document processing service |
+| **MCP Server** | [http://localhost:9000](http://localhost:9000) | Model Context Protocol server |
+
+### ⚡ Health Checks
+
+Verify all services are running:
+
+```bash
+# Check service status
+docker-compose ps
+
+# Test main application
+curl http://localhost:3000/health
+
+# Test database connectivity
+docker-compose exec postgres pg_isready -U postgres -d openwebui
+
+# Test vector database
+curl http://localhost:6333/health
+```
+
 ## 📋 Table of Contents
 
 - [Features](#features)

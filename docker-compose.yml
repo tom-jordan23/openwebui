@@ -9,15 +9,58 @@ services:
       - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-your-secret-key}
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/openwebui
       - REDIS_URL=redis://redis:6379
+      - AUTO_ACTIVATE_FIRST_ADMIN=${AUTO_ACTIVATE_FIRST_ADMIN:-true}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-}
     volumes:
       - ./data/openwebui:/app/backend/data
       - ./config/openwebui:/app/backend/config
+      - ./scripts:/app/scripts
     depends_on:
       - postgres
       - redis
+      - admin-activator
     restart: unless-stopped
     networks:
       - ai-assistant
+
+  # Service to auto-activate first admin user
+  admin-activator:
+    image: postgres:15-alpine
+    container_name: admin-activator
+    environment:
+      - PGPASSWORD=postgres
+    volumes:
+      - ./scripts:/scripts
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+        echo 'Waiting for database to be ready...';
+        while ! pg_isready -h postgres -p 5432 -U postgres -d openwebui; do
+          echo 'Database not ready, waiting 5 seconds...';
+          sleep 5;
+        done;
+        echo 'Database is ready. Checking for admin users...';
+        ADMIN_COUNT=$$(psql -h postgres -U postgres -d openwebui -t -c \"SELECT COUNT(*) FROM \\\"user\\\" WHERE role = 'admin';\");
+        if [ \"$$ADMIN_COUNT\" -eq 0 ]; then
+          echo 'No admin users found. Activating first user as admin...';
+          FIRST_USER_ID=$$(psql -h postgres -U postgres -d openwebui -t -c \"SELECT id FROM \\\"user\\\" ORDER BY created_at ASC LIMIT 1;\" | tr -d ' ');
+          if [ ! -z \"$$FIRST_USER_ID\" ]; then
+            psql -h postgres -U postgres -d openwebui -c \"UPDATE \\\"user\\\" SET role = 'admin' WHERE id = '$$FIRST_USER_ID';\";
+            psql -h postgres -U postgres -d openwebui -c \"UPDATE auth SET active = true WHERE id = '$$FIRST_USER_ID';\";
+            USER_INFO=$$(psql -h postgres -U postgres -d openwebui -t -c \"SELECT name, email FROM \\\"user\\\" WHERE id = '$$FIRST_USER_ID';\");
+            echo \"Successfully activated first user as admin: $$USER_INFO\";
+          else
+            echo 'No users found in database yet.';
+          fi;
+        else
+          echo \"Found $$ADMIN_COUNT admin user(s). No action needed.\";
+        fi;
+        echo 'Admin activation check complete.';
+      "
+    networks:
+      - ai-assistant
+    restart: "no"
 
   # Using Ollama for simple local model serving
   ollama:
