@@ -1,0 +1,90 @@
+{{- if .Values.openwebui.autoscaling.enabled }}
+# OpenWebUI HorizontalPodAutoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-openwebui
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "openwebui-platform.fullname" . }}-openwebui
+  minReplicas: {{ .Values.openwebui.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.openwebui.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.openwebui.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.openwebui.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.openwebui.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.openwebui.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+
+---
+{{- if and .Values.mcp.enabled .Values.mcp.autoscaling.enabled }}
+# MCP Server HorizontalPodAutoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-mcp
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "openwebui-platform.fullname" . }}-mcp
+  minReplicas: {{ .Values.mcp.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.mcp.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.mcp.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.mcp.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+
+---
+{{- if and .Values.graphrag.enabled .Values.graphrag.processor.autoscaling.enabled }}
+# GraphRAG Processor HorizontalPodAutoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-graphrag-processor
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: graphrag-processor
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "openwebui-platform.fullname" . }}-graphrag-processor
+  minReplicas: {{ .Values.graphrag.processor.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.graphrag.processor.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.graphrag.processor.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.graphrag.processor.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+{{- end }}

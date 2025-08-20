@@ -1,0 +1,84 @@
+# OpenWebUI Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-openwebui
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+spec:
+  type: {{ .Values.openwebui.service.type }}
+  ports:
+    - port: {{ .Values.openwebui.service.port }}
+      targetPort: {{ .Values.openwebui.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "openwebui-platform.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+
+---
+{{- if .Values.lightllm.enabled }}
+# LightLLM Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-lightllm
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: lightllm
+spec:
+  type: {{ .Values.lightllm.service.type }}
+  ports:
+    - port: {{ .Values.lightllm.service.port }}
+      targetPort: {{ .Values.lightllm.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "openwebui-platform.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: lightllm
+{{- end }}
+
+---
+{{- if .Values.mcp.enabled }}
+# MCP Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-mcp
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp
+spec:
+  type: {{ .Values.mcp.service.type }}
+  ports:
+    - port: {{ .Values.mcp.service.port }}
+      targetPort: {{ .Values.mcp.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "openwebui-platform.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp
+{{- end }}
+
+---
+{{- if .Values.graphrag.enabled }}
+# GraphRAG Processor Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-graphrag-processor
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: graphrag-processor
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "openwebui-platform.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: graphrag-processor
+{{- end }}

@@ -1,0 +1,44 @@
+apiVersion: v2
+name: openwebui-platform
+description: Production-ready AI Assistant Platform with GraphRAG and MCP
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+home: https://github.com/open-webui/open-webui
+sources:
+  - https://github.com/open-webui/open-webui
+maintainers:
+  - name: OpenWebUI Team
+    email: team@openwebui.com
+keywords:
+  - ai
+  - assistant
+  - llm
+  - graphrag
+  - mcp
+  - kubernetes
+dependencies:
+  - name: postgresql
+    version: "12.12.10"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "18.1.5"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
+  - name: qdrant
+    version: "0.7.0"
+    repository: "https://qdrant.github.io/qdrant-helm"
+    condition: qdrant.enabled
+  - name: neo4j
+    version: "5.12.0"
+    repository: "https://helm.neo4j.com/neo4j"
+    condition: neo4j.enabled
+  - name: prometheus
+    version: "25.6.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
+    condition: monitoring.prometheus.enabled
+  - name: grafana
+    version: "7.0.8"
+    repository: "https://grafana.github.io/helm-charts"
+    condition: monitoring.grafana.enabled

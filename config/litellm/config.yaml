@@ -1,0 +1,17 @@
+model_list:
+  # Mock model for testing (no actual model required)
+  - model_name: test-model
+    litellm_params:
+      model: gpt-3.5-turbo
+      api_key: test-key
+      mock_response: "Hello! This is a test response from the mock model."
+
+# General settings
+general_settings:
+  master_key: sk-1234
+  database_url: postgresql://postgres:postgres@postgres:5432/litellm
+  
+# Logging
+litellm_settings:
+  drop_params: true
+  set_verbose: false

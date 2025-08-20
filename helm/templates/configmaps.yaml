@@ -1,0 +1,95 @@
+# OpenWebUI Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-openwebui-config
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+data:
+  app.conf: |
+    # OpenWebUI Application Configuration
+    DEBUG=false
+    LOG_LEVEL=INFO
+    
+    # Database Configuration
+    DATABASE_MAX_CONNECTIONS=20
+    DATABASE_CONNECTION_TIMEOUT=30
+    
+    # Redis Configuration
+    REDIS_MAX_CONNECTIONS=10
+    REDIS_CONNECTION_TIMEOUT=5
+    
+    # Model Configuration
+    DEFAULT_MODEL=llama2-7b
+    MODEL_TIMEOUT=300
+    
+    # GraphRAG Configuration
+    GRAPHRAG_ENABLED={{ .Values.openwebui.env.ENABLE_GRAPHRAG }}
+    GRAPHRAG_CHUNK_SIZE=512
+    GRAPHRAG_CHUNK_OVERLAP=50
+    
+    # MCP Configuration
+    MCP_ENABLED={{ .Values.openwebui.env.ENABLE_MCP }}
+    MCP_TIMEOUT=30
+
+---
+{{- if .Values.graphrag.enabled }}
+# GraphRAG Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-graphrag-config
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: graphrag
+data:
+  config.yaml: |
+    vector_db:
+      provider: "qdrant"
+      host: "{{ .Release.Name }}-qdrant"
+      port: 6333
+      collection_name: "openwebui_knowledge"
+      batch_size: 100
+    
+    graph_db:
+      uri: "bolt://{{ .Release.Name }}-neo4j:7687"
+      user: "neo4j"
+      password: "{{ .Values.neo4j.neo4j.password }}"
+      database: "neo4j"
+      batch_size: 1000
+    
+    embedding:
+      provider: "sentence_transformers"
+      model_name: "sentence-transformers/all-mpnet-base-v2"
+      batch_size: 32
+      device: "cpu"
+    
+    entity_extraction:
+      provider: "spacy"
+      spacy_model: "en_core_web_sm"
+      confidence_threshold: 0.7
+      max_entities_per_chunk: 10
+    
+    relationship_extraction:
+      provider: "openie"
+      confidence_threshold: 0.6
+      max_relationships_per_chunk: 15
+    
+    chunking:
+      strategy: "semantic"
+      chunk_size: 512
+      chunk_overlap: 50
+      similarity_threshold: 0.8
+    
+    processing:
+      async_processing: true
+      max_concurrent_jobs: 5
+      max_file_size_mb: 100
+      
+    retrieval:
+      vector_weight: 0.7
+      graph_weight: 0.3
+      similarity_threshold: 0.7
+      graph_expansion_depth: 2
+{{- end }}

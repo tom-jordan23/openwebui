@@ -1,0 +1,121 @@
+{{- if .Values.lightllm.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-lightllm
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: lightllm
+spec:
+  replicas: {{ .Values.lightllm.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: lightllm
+  template:
+    metadata:
+      labels:
+        {{- include "openwebui-platform.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: lightllm
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "openwebui-platform.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: lightllm
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+              - ALL
+          image: "{{ .Values.lightllm.image.repository }}:{{ .Values.lightllm.image.tag }}"
+          imagePullPolicy: {{ .Values.lightllm.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.lightllm.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: MODEL_PATH
+              value: "/models"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "{{ .Values.lightllm.service.targetPort }}"
+            - name: GPU_MEMORY_FRACTION
+              value: "0.9"
+          command:
+            - "python"
+            - "-m"
+            - "lightllm.server.api_server"
+          args:
+            - "--model_dir"
+            - "/models"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "{{ .Values.lightllm.service.targetPort }}"
+            - "--tp"
+            - "1"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.lightllm.resources | nindent 12 }}
+          volumeMounts:
+            - name: models
+              mountPath: /models
+              readOnly: true
+            - name: cache
+              mountPath: /cache
+      volumes:
+        - name: models
+          {{- if .Values.lightllm.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "openwebui-platform.fullname" . }}-lightllm-models
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: cache
+          emptyDir: {}
+      {{- with .Values.lightllm.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.lightllm.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- else }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: accelerator
+                operator: In
+                values:
+                - nvidia-gpu
+      {{- end }}
+      {{- with .Values.lightllm.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

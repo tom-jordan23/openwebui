@@ -1,0 +1,679 @@
+# OpenWebUI AI Assistant Platform - .gitignore
+
+# =============================================================================
+# SECRETS AND CREDENTIALS - NEVER COMMIT THESE
+# =============================================================================
+
+# Environment files with secrets
+.env
+.env.local
+.env.prod
+.env.production
+.env.staging
+.env.development
+.env.test
+*.env
+
+# API Keys and tokens
+**/api_keys/
+**/tokens/
+**/*_key
+**/*_secret
+**/*_token
+**/*_password
+**/credentials.json
+**/service-account*.json
+
+# SSL/TLS certificates and keys
+**/*.key
+**/*.pem
+**/*.crt
+**/*.p12
+**/*.pfx
+config/nginx/ssl/
+**/ssl/
+**/certs/
+**/certificates/
+
+# Database credentials and backups
+**/db_password
+**/database.url
+**/backup/*.sql
+**/backup/*.dump
+**/dumps/
+
+# =============================================================================
+# RUNTIME DATA AND LOGS
+# =============================================================================
+
+# Application data directories
+data/
+cache/
+temp/
+tmp/
+logs/
+*.log
+*.log.*
+
+# OpenWebUI specific data
+data/openwebui/
+uploads/
+vector_db/
+models/
+model_cache/
+cache/lightllm/
+
+# Database data
+**/postgres_data/
+**/redis_data/
+**/neo4j_data/
+**/qdrant_data/
+
+# Monitoring data
+**/prometheus_data/
+**/grafana_data/
+
+# =============================================================================
+# PYTHON
+# =============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# =============================================================================
+# NODE.JS / JAVASCRIPT
+# =============================================================================
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+storybook-static
+
+# Temporary folders
+tmp/
+temp/
+
+# =============================================================================
+# DOCKER
+# =============================================================================
+
+# Docker volumes and data
+volumes/
+**/docker-data/
+docker-compose.override.yml
+
+# =============================================================================
+# KUBERNETES
+# =============================================================================
+
+# Helm secrets
+**/secrets.yaml
+**/values-*.yaml
+values-prod.yaml
+values-staging.yaml
+values-development.yaml
+
+# Kubernetes generated files
+*.generated.yaml
+**/manifests/generated/
+
+# kubeconfig files
+kubeconfig
+.kube/
+**/kubeconfig*
+
+# =============================================================================
+# IDE AND EDITOR FILES
+# =============================================================================
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# PyCharm
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*~
+*.swp
+*.swo
+*un~
+Session.vim
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# =============================================================================
+# OPERATING SYSTEM FILES
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Linux
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
+# =============================================================================
+# AI/ML SPECIFIC
+# =============================================================================
+
+# Model files (usually too large for git)
+*.bin
+*.safetensors
+*.gguf
+*.ggml
+*.pt
+*.pth
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+
+# Model directories
+models/
+checkpoints/
+weights/
+embeddings/
+**/model_cache/
+**/huggingface_cache/
+
+# Vector databases
+**/chroma/
+**/faiss/
+**/qdrant/
+**/weaviate/
+
+# Knowledge graphs
+**/neo4j/
+**/graph_data/
+
+# Training outputs
+runs/
+wandb/
+tensorboard_logs/
+**/experiments/
+**/outputs/
+
+# Dataset files (usually too large for git)
+**/datasets/
+*.csv
+*.parquet
+*.jsonl
+*.tsv
+
+# =============================================================================
+# MONITORING AND OBSERVABILITY
+# =============================================================================
+
+# Grafana
+**/grafana.db
+**/grafana/data/
+
+# Prometheus
+**/prometheus/data/
+
+# Jaeger
+**/jaeger/
+
+# =============================================================================
+# BACKUP AND TEMPORARY FILES
+# =============================================================================
+
+# Backup files
+*.backup
+*.bak
+*.orig
+*.rej
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tbz2
+*.tar.xz
+*.txz
+*.7z
+*.rar
+
+# =============================================================================
+# TESTING AND DEVELOPMENT
+# =============================================================================
+
+# Test outputs
+test-results/
+test_output/
+*.xml
+*.junit
+
+# Load testing results
+load_test_results/
+performance_results/
+
+# Development databases
+*.sqlite
+*.sqlite3
+*.db
+
+# Development artifacts
+scratch/
+playground/
+experiments/
+sandbox/
+
+# =============================================================================
+# CI/CD
+# =============================================================================
+
+# GitHub Actions
+.github/workflows/*.generated.yml
+
+# GitLab CI
+.gitlab-ci.local.yml
+
+# Jenkins
+Jenkinsfile.local
+
+# =============================================================================
+# CUSTOM PROJECT EXCLUDES
+# =============================================================================
+
+# Validation reports (generated files)
+validation_reports/
+reports/*.json
+*.validation.json
+
+# Temporary repositories
+temp_repos_*.py
+
+# Local development overrides
+docker-compose.local.yml
+helm/values.local.yaml
+
+# =============================================================================
+# ALLOW SPECIFIC FILES (overrides above patterns)
+# =============================================================================
+
+# Allow important config templates
+!.env.example
+!.env.template
+!docker-compose.example.yml
+!config/**/*.example
+!config/**/*.template
+!config/**/*.sample
+
+# Allow important documentation
+!README.md
+!INSTALL.md
+!USAGE.md
+!TROUBLESHOOTING.md
+!CONTRIBUTING.md
+!CHANGELOG.md
+!LICENSE
+!CLAUDE.md
+!PROMPT.md
+
+# Allow requirement files
+!requirements.txt
+!requirements/*.txt
+!package.json
+!Pipfile
+!pyproject.toml
+
+# Allow CI/CD configurations
+!.github/
+!.gitlab-ci.yml
+!Jenkinsfile
+!.circleci/
+
+# Allow Docker files
+!Dockerfile*
+!docker-compose*.yml
+
+# Allow Kubernetes/Helm files
+!helm/
+!k8s/
+!kubernetes/
+!*.yaml
+!*.yml
+
+# But exclude generated or environment-specific ones
+helm/values-*.yaml
+k8s/*-secret.yaml
+kubernetes/*-configmap.yaml

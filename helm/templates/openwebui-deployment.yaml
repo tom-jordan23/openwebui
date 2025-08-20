@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-openwebui
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+spec:
+  {{- if not .Values.openwebui.autoscaling.enabled }}
+  replicas: {{ .Values.openwebui.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: openwebui
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/openwebui-configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "openwebui-platform.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: openwebui
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "openwebui-platform.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: openwebui
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+              - ALL
+          image: "{{ .Values.openwebui.image.repository }}:{{ .Values.openwebui.image.tag }}"
+          imagePullPolicy: {{ .Values.openwebui.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.openwebui.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: WEBUI_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "openwebui-platform.fullname" . }}-secrets
+                  key: webui-secret-key
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "openwebui-platform.fullname" . }}-secrets
+                  key: database-url
+            - name: REDIS_URL
+              value: "{{ .Values.openwebui.env.REDIS_URL }}"
+            - name: VECTOR_DB_URL
+              value: "{{ .Values.openwebui.env.VECTOR_DB_URL }}"
+            - name: GRAPH_DB_URL
+              value: "{{ .Values.openwebui.env.GRAPH_DB_URL }}"
+            - name: ENABLE_GRAPHRAG
+              value: "{{ .Values.openwebui.env.ENABLE_GRAPHRAG }}"
+            - name: ENABLE_MCP
+              value: "{{ .Values.openwebui.env.ENABLE_MCP }}"
+            - name: MCP_SERVER_URL
+              value: "http://{{ include "openwebui-platform.fullname" . }}-mcp:{{ .Values.mcp.service.port }}"
+            - name: LIGHTLLM_URL
+              value: "http://{{ include "openwebui-platform.fullname" . }}-lightllm:{{ .Values.lightllm.service.port }}"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.openwebui.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /app/backend/data
+            - name: config
+              mountPath: /app/backend/config
+              readOnly: true
+      volumes:
+        - name: data
+          {{- if .Values.openwebui.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "openwebui-platform.fullname" . }}-openwebui-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: config
+          configMap:
+            name: {{ include "openwebui-platform.fullname" . }}-openwebui-config
+      {{- with .Values.openwebui.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.openwebui.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.openwebui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,301 @@
+# Docker Compose for GraphRAG Infrastructure
+# Extends the main docker-compose.yml with knowledge management services
+
+version: '3.8'
+
+services:
+  # Qdrant Vector Database
+  qdrant:
+    image: qdrant/qdrant:v1.7.4
+    container_name: openwebui_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"  # HTTP API
+      - "6334:6334"  # GRPC API
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    networks:
+      - openwebui_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Neo4j Graph Database
+  neo4j:
+    image: neo4j:5.15-community
+    container_name: openwebui_neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/var/lib/neo4j/import
+      - neo4j_plugins:/plugins
+    environment:
+      - NEO4J_AUTH=neo4j/openwebui_password
+      - NEO4J_dbms_default_database=openwebui
+      - NEO4J_dbms_allow_upgrade=true
+      - NEO4J_dbms_default_listen_address=0.0.0.0
+      - NEO4J_dbms_connector_bolt_listen_address=0.0.0.0:7687
+      - NEO4J_dbms_connector_http_listen_address=0.0.0.0:7474
+      - NEO4J_dbms_memory_heap_initial_size=512m
+      - NEO4J_dbms_memory_heap_max_size=2G
+      - NEO4J_dbms_memory_pagecache_size=1G
+      - NEO4J_dbms_security_procedures_unrestricted=gds.*,apoc.*
+      - NEO4J_dbms_security_procedures_allowlist=gds.*,apoc.*
+    networks:
+      - openwebui_network
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "openwebui_password", "RETURN 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis for Caching and Queue Management
+  redis:
+    image: redis:7.2-alpine
+    container_name: openwebui_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    networks:
+      - openwebui_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Celery Worker for Async Processing
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    container_name: openwebui_celery_worker
+    restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - celery_logs:/app/logs
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=openwebui
+      - POSTGRES_USER=openwebui
+      - POSTGRES_PASSWORD=openwebui_password
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=openwebui_password
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - postgres
+      - qdrant
+      - neo4j
+    networks:
+      - openwebui_network
+    command: celery -A src.knowledge.tasks worker --loglevel=info --concurrency=4
+
+  # Celery Beat for Scheduled Tasks
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    container_name: openwebui_celery_beat
+    restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+      - celery_logs:/app/logs
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=openwebui
+      - POSTGRES_USER=openwebui
+      - POSTGRES_PASSWORD=openwebui_password
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - openwebui_network
+    command: celery -A src.knowledge.tasks beat --loglevel=info
+
+  # Flower for Celery Monitoring
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    container_name: openwebui_flower
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - celery_worker
+    networks:
+      - openwebui_network
+    command: celery -A src.knowledge.tasks flower --port=5555
+
+  # Elasticsearch for Advanced Search (Optional)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: openwebui_elasticsearch
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    networks:
+      - openwebui_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    profiles:
+      - elasticsearch
+
+  # Kibana for Elasticsearch Visualization (Optional)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: openwebui_kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.security.enabled=false
+    depends_on:
+      - elasticsearch
+    networks:
+      - openwebui_network
+    profiles:
+      - elasticsearch
+
+  # Grafana for Monitoring and Analytics
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: openwebui_grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-postgresql-datasource,redis-datasource
+    networks:
+      - openwebui_network
+    profiles:
+      - monitoring
+
+  # Prometheus for Metrics Collection
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: openwebui_prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - openwebui_network
+    profiles:
+      - monitoring
+
+  # Text Processing Service (Custom)
+  text_processor:
+    build:
+      context: .
+      dockerfile: Dockerfile.processor
+    container_name: openwebui_text_processor
+    restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - processing_cache:/app/cache
+    environment:
+      - SPACY_MODEL=en_core_web_sm
+      - TRANSFORMERS_CACHE=/app/cache/transformers
+      - HF_HOME=/app/cache/huggingface
+      - PYTHONPATH=/app
+    networks:
+      - openwebui_network
+    profiles:
+      - processing
+
+volumes:
+  # Vector database
+  qdrant_data:
+    driver: local
+  
+  # Graph database
+  neo4j_data:
+    driver: local
+  neo4j_logs:
+    driver: local
+  neo4j_import:
+    driver: local
+  neo4j_plugins:
+    driver: local
+  
+  # Cache and queues
+  redis_data:
+    driver: local
+  
+  # Search engine
+  elasticsearch_data:
+    driver: local
+  
+  # Monitoring
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  
+  # Processing
+  celery_logs:
+    driver: local
+  processing_cache:
+    driver: local
+
+networks:
+  openwebui_network:
+    external: true

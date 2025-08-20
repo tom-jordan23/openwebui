@@ -1,0 +1,86 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+# OpenWebUI Service Monitor
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-openwebui
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+spec:
+  selector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: openwebui
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+{{- if .Values.lightllm.enabled }}
+# LightLLM Service Monitor
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-lightllm
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: lightllm
+spec:
+  selector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: lightllm
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+{{- end }}
+
+---
+{{- if .Values.mcp.enabled }}
+# MCP Server Service Monitor
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-mcp
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp
+spec:
+  selector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mcp
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+{{- end }}
+
+---
+{{- if .Values.graphrag.enabled }}
+# GraphRAG Processor Service Monitor
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-graphrag-processor
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: graphrag-processor
+spec:
+  selector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: graphrag-processor
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+{{- end }}
+{{- end }}

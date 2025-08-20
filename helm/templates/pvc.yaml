@@ -1,0 +1,48 @@
+{{- if .Values.openwebui.persistence.enabled }}
+# OpenWebUI Data PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-openwebui-data
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.openwebui.persistence.storageClass }}
+  {{- if (eq "-" .Values.openwebui.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.openwebui.persistence.storageClass }}
+  {{- end }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.openwebui.persistence.size }}
+{{- end }}
+
+---
+{{- if and .Values.lightllm.enabled .Values.lightllm.persistence.enabled }}
+# LightLLM Models PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-lightllm-models
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: lightllm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.lightllm.persistence.storageClass }}
+  {{- if (eq "-" .Values.lightllm.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.lightllm.persistence.storageClass }}
+  {{- end }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.lightllm.persistence.size }}
+{{- end }}

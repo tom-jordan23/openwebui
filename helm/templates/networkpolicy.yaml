@@ -1,0 +1,162 @@
+{{- if .Values.security.networkPolicies.enabled }}
+# OpenWebUI Network Policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-openwebui
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: openwebui
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: openwebui
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          {{- include "openwebui-platform.selectorLabels" . | nindent 10 }}
+          app.kubernetes.io/component: lightllm
+    ports:
+    - protocol: TCP
+      port: 8000
+  - to:
+    - podSelector:
+        matchLabels:
+          {{- include "openwebui-platform.selectorLabels" . | nindent 10 }}
+          app.kubernetes.io/component: mcp
+    ports:
+    - protocol: TCP
+      port: 9000
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: postgresql
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  - {} # Allow all egress for external APIs (can be restricted further)
+
+---
+{{- if .Values.lightllm.enabled }}
+# LightLLM Network Policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-lightllm
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: lightllm
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: lightllm
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          {{- include "openwebui-platform.selectorLabels" . | nindent 10 }}
+          app.kubernetes.io/component: openwebui
+    - podSelector:
+        matchLabels:
+          {{- include "openwebui-platform.selectorLabels" . | nindent 10 }}
+          app.kubernetes.io/component: mcp
+    ports:
+    - protocol: TCP
+      port: 8000
+  egress:
+  - {} # Allow all egress for model downloads (can be restricted to specific registries)
+{{- end }}
+
+---
+{{- if .Values.mcp.enabled }}
+# MCP Server Network Policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "openwebui-platform.fullname" . }}-mcp
+  labels:
+    {{- include "openwebui-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "openwebui-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mcp
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          {{- include "openwebui-platform.selectorLabels" . | nindent 10 }}
+          app.kubernetes.io/component: openwebui
+    ports:
+    - protocol: TCP
+      port: 9000
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          {{- include "openwebui-platform.selectorLabels" . | nindent 10 }}
+          app.kubernetes.io/component: lightllm
+    ports:
+    - protocol: TCP
+      port: 8000
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: postgresql
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: qdrant
+    ports:
+    - protocol: TCP
+      port: 6333
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: neo4j
+    ports:
+    - protocol: TCP
+      port: 7687
+{{- end }}
+{{- end }}

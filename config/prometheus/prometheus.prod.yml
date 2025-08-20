@@ -1,0 +1,128 @@
+# Prometheus Configuration for OpenWebUI Platform Production
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'openwebui-prod'
+    environment: 'production'
+
+# Rule files
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # OpenWebUI Application
+  - job_name: 'openwebui'
+    static_configs:
+      - targets: ['openwebui:8080']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # LightLLM Model Server
+  - job_name: 'lightllm'
+    static_configs:
+      - targets: ['lightllm:8000']
+    metrics_path: /metrics
+    scrape_interval: 30s
+    scrape_timeout: 15s
+
+  # GraphRAG Processor
+  - job_name: 'graphrag-processor'
+    static_configs:
+      - targets: ['graphrag-processor:8000']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # MCP Server
+  - job_name: 'mcp-server'
+    static_configs:
+      - targets: ['mcp-server:9000']
+    metrics_path: /metrics
+    scrape_interval: 15s
+
+  # PostgreSQL Database
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-primary:5432']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Redis Cache
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-master:6379']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Qdrant Vector Database
+  - job_name: 'qdrant'
+    static_configs:
+      - targets: ['qdrant:6333']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Neo4j Graph Database
+  - job_name: 'neo4j'
+    static_configs:
+      - targets: ['neo4j:7474']
+    metrics_path: /metrics
+    scrape_interval: 60s
+
+  # Node Exporter (System Metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    metrics_path: /metrics
+    scrape_interval: 15s
+
+  # Nginx Reverse Proxy
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:80']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Grafana Dashboard
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Celery Workers
+  - job_name: 'celery-workers'
+    static_configs:
+      - targets: ['celery-worker:8080']  # Assuming metrics endpoint
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - 'alertmanager:9093'
+
+# Storage configuration
+storage:
+  tsdb:
+    path: /prometheus
+    retention.time: 30d
+    retention.size: 10GB
+
+# Remote write configuration (optional - for long-term storage)
+# remote_write:
+#   - url: "https://your-remote-storage/api/v1/write"
+#     basic_auth:
+#       username: "user"
+#       password: "password"

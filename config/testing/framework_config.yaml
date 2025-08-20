@@ -1,0 +1,251 @@
+# Comprehensive Testing Framework Configuration
+
+# Environment Configuration
+environment:
+  # Services required for integration tests
+  integration_services:
+    - postgres
+    - redis
+    - qdrant
+  
+  # Services required for E2E tests
+  e2e_services:
+    - postgres
+    - redis
+    - qdrant
+    - neo4j
+    - openwebui
+    - nginx
+  
+  # Test API configuration
+  api_base_url: "http://localhost:8080"
+  
+  # Docker configuration
+  docker_network: "openwebui_test"
+  
+  # Database configurations
+  test_databases:
+    postgres:
+      host: "localhost"
+      port: 5432
+      database: "openwebui_test"
+      user: "test_user"
+      password: "test_password"
+    
+    redis:
+      host: "localhost"
+      port: 6379
+      database: 1
+    
+    qdrant:
+      host: "localhost"
+      port: 6333
+    
+    neo4j:
+      uri: "bolt://localhost:7687"
+      user: "neo4j"
+      password: "test_password"
+
+# Cache Configuration
+cache:
+  size: 10000
+  strategy: "intelligent"  # lru, lfu, ttl, intelligent, hierarchical
+
+# Performance Testing Configuration
+performance:
+  # Baseline thresholds
+  response_time_threshold_ms: 500
+  throughput_threshold_rps: 100
+  error_rate_threshold: 0.05
+  
+  # Load testing
+  load_test:
+    max_users: 100
+    spawn_rate: 10
+    duration_seconds: 300
+  
+  # Stress testing
+  stress_test:
+    max_users: 500
+    spawn_rate: 50
+    duration_seconds: 600
+
+# Chaos Engineering Configuration
+chaos_engineering:
+  enabled: true
+  
+  # Experiment configurations
+  experiments:
+    pod_failure:
+      enabled: true
+      failure_percentage: 25
+      duration_seconds: 60
+      recovery_timeout_seconds: 120
+    
+    network_latency:
+      enabled: true
+      latency_ms: 100
+      jitter_ms: 50
+      duration_seconds: 30
+    
+    resource_exhaustion:
+      enabled: true
+      cpu_stress_percentage: 80
+      memory_stress_percentage: 80
+      duration_seconds: 45
+    
+    database_failure:
+      enabled: false  # Disabled for safety
+      duration_seconds: 30
+  
+  # Success criteria
+  success_criteria:
+    max_downtime_seconds: 120
+    max_recovery_time_seconds: 60
+    max_error_rate_increase: 0.1
+
+# Security Testing Configuration
+security:
+  enabled: true
+  
+  # Test types
+  tests:
+    sql_injection: true
+    xss: true
+    csrf: true
+    authentication_bypass: true
+    authorization_bypass: true
+    input_validation: true
+    rate_limiting: true
+  
+  # Security scanning
+  vulnerability_scanning:
+    enabled: true
+    scan_depth: "medium"  # light, medium, deep
+    exclude_paths:
+      - "/health"
+      - "/metrics"
+
+# AI Validation Configuration
+ai_validation:
+  enabled: true
+  
+  # Model testing
+  models:
+    - name: "llama2-7b"
+      test_prompts:
+        - "What is the capital of France?"
+        - "Explain quantum computing simply"
+        - "Write a Python function for fibonacci"
+      quality_threshold: 0.8
+      safety_threshold: 0.95
+    
+    - name: "codellama-13b"
+      test_prompts:
+        - "Create a REST API endpoint"
+        - "Debug this Python code"
+        - "Optimize SQL query performance"
+      quality_threshold: 0.85
+      safety_threshold: 0.95
+  
+  # Response validation
+  validation:
+    min_response_length: 10
+    max_response_length: 5000
+    check_toxicity: true
+    check_bias: true
+    check_factuality: true
+
+# Test Execution Configuration
+execution:
+  # Parallel execution
+  max_parallel_tests: 10
+  max_parallel_per_type: 3
+  
+  # Timeouts
+  default_timeout_seconds: 60
+  max_timeout_seconds: 600
+  
+  # Retry configuration
+  max_retries: 2
+  retry_delay_seconds: 5
+  
+  # Test prioritization
+  priority_weights:
+    critical: 1.0
+    high: 0.8
+    medium: 0.6
+    low: 0.4
+
+# Reporting Configuration
+reporting:
+  # Output formats
+  formats:
+    - json
+    - html
+    - junit_xml
+  
+  # Report storage
+  output_directory: "test_reports"
+  retain_reports_days: 30
+  
+  # Notifications
+  notifications:
+    enabled: true
+    channels:
+      - email
+      - slack
+    
+    # Notification conditions
+    notify_on_failure: true
+    notify_on_regression: true
+    notify_on_completion: false
+
+# Integration Configurations
+integrations:
+  # CI/CD integration
+  ci_cd:
+    enabled: true
+    fail_on_regression: true
+    fail_on_critical_failure: true
+    fail_on_security_issue: true
+  
+  # Monitoring integration
+  monitoring:
+    prometheus_endpoint: "http://localhost:9090"
+    grafana_endpoint: "http://localhost:3000"
+    alert_manager_endpoint: "http://localhost:9093"
+  
+  # Issue tracking
+  issue_tracking:
+    enabled: true
+    system: "github"  # github, jira, gitlab
+    auto_create_issues: true
+    issue_labels:
+      - "bug"
+      - "test-failure"
+
+# Advanced Features
+advanced:
+  # Machine learning for test optimization
+  ml_optimization:
+    enabled: true
+    model_type: "random_forest"
+    features:
+      - "test_execution_time"
+      - "failure_rate"
+      - "code_coverage"
+      - "complexity_metrics"
+  
+  # Predictive analysis
+  predictive_analysis:
+    enabled: true
+    predict_failures: true
+    predict_performance_issues: true
+    prediction_horizon_days: 7
+  
+  # Test data management
+  test_data:
+    synthetic_data_generation: true
+    data_anonymization: true
+    data_cleanup_after_tests: true
