@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueprint Theme Demo - tojo.world</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/blueprint-theme.css">
+    <link rel="stylesheet" href="styles/blueprint-components.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-body);
+            background: var(--paper-tertiary);
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+        }
+        
+        .demo-section {
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+        }
+        
+        .demo-item {
+            margin-bottom: var(--spacing-lg);
+        }
+    </style>
+</head>
+<body class="blueprint-grid">
+
+<div class="demo-container">
+    <!-- Blueprint Title Block -->
+    <div class="blueprint-title-block">
+        <div class="title-block-content">
+            <div>
+                <h1 class="title-main">OpenWebUI Blueprint Theme</h1>
+                <p class="title-subtitle">
+                    A technical drawing inspired interface design for OpenWebUI, 
+                    channeling the precision and elegance of Artifex Hackworth's engineering aesthetic.
+                    Subtly branded for tojo.world deployment.
+                </p>
+            </div>
+            <div class="title-block-meta">
+                <span class="meta-label">Drawing No.:</span>
+                <span class="meta-value">OWUI-THEME-001</span>
+                <span class="meta-label">Revision:</span>
+                <span class="meta-value">1.0</span>
+                <span class="meta-label">Date:</span>
+                <span class="meta-value">2025-08-21</span>
+                <span class="meta-label">Designer:</span>
+                <span class="meta-value">Claude (Anthropic)</span>
+                <span class="meta-label">Host:</span>
+                <span class="meta-value">tojo.world</span>
+                <span class="meta-label">Status:</span>
+                <span class="meta-value">PROTOTYPE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Demo -->
+    <div class="demo-section">
+        <h2>Navigation Elements</h2>
+        <nav class="blueprint-nav">
+            <div class="header-content">
+                <div class="brand-section">
+                    <div class="brand-header">
+                        <div class="tojo-compass"></div>
+                        <div class="brand-text">
+                            <h1 class="blueprint-title">System Control</h1>
+                            <p class="blueprint-subtitle">Technical Interface</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="technical-nav">
+                    <button class="blueprint-nav-item active">Dashboard</button>
+                    <button class="blueprint-nav-item">Components</button>
+                    <button class="blueprint-nav-item">Settings</button>
+                    <button class="blueprint-nav-item">Analytics</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Cards and Metrics -->
+    <div class="demo-section">
+        <h2>Cards and Metrics</h2>
+        <div class="demo-grid">
+            <div class="blueprint-card">
+                <div class="blueprint-card-header">
+                    <h3 class="section-title">System Metrics</h3>
+                    <div class="tojo-brand-element">
+                        <div class="tojo-logo-mini"></div>
+                        <span>tojo.world</span>
+                    </div>
+                </div>
+                <div class="blueprint-card-content">
+                    <div class="blueprint-metric">
+                        <div class="blueprint-metric-value">1,247</div>
+                        <div class="blueprint-metric-label">Active Sessions</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="blueprint-card">
+                <div class="blueprint-card-header">
+                    <h3 class="section-title">Performance Data</h3>
+                    <span class="drawing-symbol north"></span>
+                </div>
+                <div class="blueprint-card-content">
+                    <div class="blueprint-progress">
+                        <div class="blueprint-progress-bar" style="width: 75%;"></div>
+                    </div>
+                    <div class="blueprint-progress-label">
+                        <span>System Load</span>
+                        <span>75%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons and Controls -->
+    <div class="demo-section">
+        <h2>Controls and Buttons</h2>
+        <div class="demo-item">
+            <button class="blueprint-button primary">
+                <div class="button-icon">⚡</div>
+                <div class="button-content">
+                    <span class="button-title">Primary Action</span>
+                    <span class="button-desc">Execute main operation</span>
+                </div>
+                <div class="blueprint-arrow"></div>
+            </button>
+        </div>
+        <div class="demo-item">
+            <button class="blueprint-button">
+                <div class="button-icon">⚙</div>
+                <div class="button-content">
+                    <span class="button-title">Secondary Action</span>
+                    <span class="button-desc">Configure system parameters</span>
+                </div>
+                <div class="blueprint-arrow"></div>
+            </button>
+        </div>
+        <div class="demo-item">
+            <button class="blueprint-button small">Small Button</button>
+            <button class="blueprint-button small primary">Small Primary</button>
+        </div>
+    </div>
+
+    <!-- Forms -->
+    <div class="demo-section">
+        <h2>Form Elements</h2>
+        <div class="blueprint-form">
+            <div class="blueprint-form-group">
+                <label class="blueprint-label">System Identifier</label>
+                <div class="blueprint-input-group">
+                    <input type="text" class="blueprint-input" placeholder="Enter system ID..." value="OWUI-001">
+                    <div class="blueprint-input-icon">🔧</div>
+                </div>
+            </div>
+            
+            <div class="blueprint-form-group">
+                <label class="blueprint-label">Configuration Notes</label>
+                <textarea class="blueprint-textarea" placeholder="Technical specifications and notes...">System operating within normal parameters. All subsystems functional.</textarea>
+            </div>
+            
+            <div class="blueprint-form-group">
+                <label class="blueprint-label">System Status</label>
+                <select class="blueprint-select">
+                    <option>Operational</option>
+                    <option>Maintenance</option>
+                    <option>Offline</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables -->
+    <div class="demo-section">
+        <h2>Technical Specifications</h2>
+        <table class="blueprint-table">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Specification</th>
+                    <th>Status</th>
+                    <th>Last Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Core Engine</td>
+                    <td>Claude 3.5 Sonnet</td>
+                    <td>Online</td>
+                    <td>2025-08-21</td>
+                </tr>
+                <tr>
+                    <td>Interface Theme</td>
+                    <td>Blueprint v1.0</td>
+                    <td>Active</td>
+                    <td>2025-08-21</td>
+                </tr>
+                <tr>
+                    <td>Hosting Platform</td>
+                    <td>tojo.world</td>
+                    <td>Operational</td>
+                    <td>2025-08-21</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Alerts -->
+    <div class="demo-section">
+        <h2>Alert Systems</h2>
+        <div class="blueprint-alert info">
+            <div class="blueprint-alert-icon">ℹ</div>
+            <div class="blueprint-alert-content">
+                <div class="blueprint-alert-title">System Information</div>
+                Theme successfully loaded and operational on tojo.world infrastructure.
+            </div>
+        </div>
+        
+        <div class="blueprint-alert warning">
+            <div class="blueprint-alert-icon">⚠</div>
+            <div class="blueprint-alert-content">
+                <div class="blueprint-alert-title">Configuration Notice</div>
+                Consider adjusting grid spacing for mobile viewport optimization.
+            </div>
+        </div>
+        
+        <div class="blueprint-alert success">
+            <div class="blueprint-alert-icon">✓</div>
+            <div class="blueprint-alert-content">
+                <div class="blueprint-alert-title">Deployment Successful</div>
+                Blueprint theme has been successfully integrated with OpenWebUI components.
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="demo-section">
+        <h2>Technical Documentation Tabs</h2>
+        <div class="blueprint-tabs">
+            <ul class="blueprint-tab-list">
+                <li class="blueprint-tab active">Overview</li>
+                <li class="blueprint-tab">Specifications</li>
+                <li class="blueprint-tab">Implementation</li>
+                <li class="blueprint-tab">Testing</li>
+            </ul>
+        </div>
+        <div class="blueprint-card">
+            <div class="blueprint-card-content">
+                <p>This blueprint theme draws inspiration from technical drawings and architectural sketches, 
+                particularly the aesthetic of Artifex Hackworth from Neal Stephenson's "The Diamond Age". 
+                The design emphasizes precision, clarity, and technical elegance while maintaining modern usability.</p>
+                
+                <h4>Key Design Elements:</h4>
+                <ul>
+                    <li>Blueprint blue color palette (#003d7a, #0066cc, #4da6ff)</li>
+                    <li>Aged paper backgrounds (#fefcf6, #f8f6f0)</li>
+                    <li>Technical drawing line weights and grid systems</li>
+                    <li>Monospace typography for technical specifications</li>
+                    <li>Subtle tojo.world branding integration</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Display -->
+    <div class="demo-section">
+        <h2>Technical Code Display</h2>
+        <div class="blueprint-code" data-lang="css">
+/* Example CSS using blueprint theme variables */
+.technical-component {
+  background: var(--paper-base);
+  border: var(--border-weight-medium) solid var(--blueprint-primary);
+  color: var(--text-primary);
+  font-family: var(--font-technical);
+  padding: var(--spacing-md);
+}
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="demo-section">
+        <h2>Navigation Breadcrumb</h2>
+        <nav class="blueprint-breadcrumb">
+            <a href="#" class="blueprint-breadcrumb-item">tojo.world</a>
+            <span class="blueprint-breadcrumb-separator">▶</span>
+            <a href="#" class="blueprint-breadcrumb-item">OpenWebUI</a>
+            <span class="blueprint-breadcrumb-separator">▶</span>
+            <span class="blueprint-breadcrumb-item active">Blueprint Theme</span>
+        </nav>
+    </div>
+
+    <!-- Loading State -->
+    <div class="demo-section">
+        <h2>Loading States</h2>
+        <div class="blueprint-loading">
+            <div class="blueprint-spinner"></div>
+            <span>Processing technical specifications...</span>
+        </div>
+    </div>
+
+    <!-- Technical Drawing Symbols -->
+    <div class="demo-section">
+        <h2>Drawing Symbols</h2>
+        <p>
+            Navigation reference <span class="drawing-symbol north"></span>
+            Section marker <span class="drawing-symbol section"></span>
+            Detail callout <span class="drawing-symbol detail"></span>
+            Reference point <span class="drawing-symbol reference"></span>
+        </p>
+    </div>
+</div>
+
+<!-- Watermark -->
+<div class="tojo-watermark">hosted on tojo.world</div>
+
+<script>
+    // Demo interactions
+    document.querySelectorAll('.blueprint-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.blueprint-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    document.querySelectorAll('.blueprint-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.blueprint-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // Simulate progress bar animation
+    const progressBar = document.querySelector('.blueprint-progress-bar');
+    if (progressBar) {
+        let width = 0;
+        const interval = setInterval(() => {
+            width += 1;
+            progressBar.style.width = width + '%';
+            document.querySelector('.blueprint-progress-label span:last-child').textContent = width + '%';
+            if (width >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    width = 0;
+                    progressBar.style.width = '75%';
+                    document.querySelector('.blueprint-progress-label span:last-child').textContent = '75%';
+                }, 1000);
+            }
+        }, 50);
+    }
+</script>
+
+</body>
+</html>

@@ -1,4 +1,8 @@
 <script>
+    // Import blueprint theme
+    import '../styles/blueprint-theme.css';
+    import '../styles/blueprint-components.css';
+    
     import { onMount, createEventDispatcher } from 'svelte';
     import { writable } from 'svelte/store';
     import Icon from '@iconify/svelte';

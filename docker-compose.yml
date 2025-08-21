@@ -1,6 +1,9 @@
 services:
   openwebui:
-    image: ghcr.io/open-webui/open-webui:main
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: openwebui-blueprint:latest
     container_name: openwebui
     ports:
       - "3000:8080"
@@ -15,6 +18,7 @@ services:
       - ./data/openwebui:/app/backend/data
       - ./config/openwebui:/app/backend/config
       - ./scripts:/app/scripts
+      - ./src/frontend/styles:/app/backend/static/themes/blueprint:ro
     depends_on:
       - postgres
       - redis
@@ -142,6 +146,8 @@ services:
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./config/nginx/ssl:/etc/nginx/ssl
+      - ./src/frontend/styles:/themes/blueprint:ro
+      - ./src/frontend/blueprint-index.html:/themes/blueprint/blueprint-index.html:ro
     depends_on:
       - openwebui
     restart: unless-stopped

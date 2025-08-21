@@ -1,10 +1,15 @@
 <!--
   Prompt Versioning Component
   Provides version management interface for prompts
+  Updated with Blueprint Theme integration for tojo.world
 -->
 <script>
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
+  
+  // Import blueprint theme
+  import '../styles/blueprint-theme.css';
+  import '../styles/blueprint-components.css';
   
   export let promptId = null;
   export let showVersionList = true;

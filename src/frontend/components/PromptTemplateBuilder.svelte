@@ -3,6 +3,10 @@
   Advanced template creation with variable management and preview
 -->
 <script>
+  // Import blueprint theme
+  import '../styles/blueprint-theme.css';
+  import '../styles/blueprint-components.css';
+  
   import { writable, derived } from 'svelte/store';
   import { onMount } from 'svelte';
   

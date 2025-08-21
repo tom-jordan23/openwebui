@@ -3,6 +3,10 @@
   Manages prompt categories with CRUD operations
 -->
 <script>
+  // Import blueprint theme
+  import '../styles/blueprint-theme.css';
+  import '../styles/blueprint-components.css';
+  
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   

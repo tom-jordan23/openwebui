@@ -1,7 +1,7 @@
 <!--
-  Prompt Management Dashboard
-  Main dashboard that integrates versioning, template builder, and category management
-  Updated with Blueprint Theme integration for tojo.world
+  Blueprint-themed Prompt Management Dashboard
+  Inspired by Artifex Hackworth's technical precision
+  Subtle tojo.world branding integration
 -->
 <script>
   import { onMount } from 'svelte';
@@ -9,12 +9,9 @@
   import PromptVersioning from './PromptVersioning.svelte';
   import PromptTemplateBuilder from './PromptTemplateBuilder.svelte';
   import PromptCategoryManager from './PromptCategoryManager.svelte';
-  import ThemeSelector from './ThemeSelector.svelte';
   
   // Import blueprint theme
   import '../styles/blueprint-theme.css';
-  import '../styles/blueprint-components.css';
-  import { currentTheme, THEMES } from '../stores/theme.js';
   
   // Active view management
   const activeView = writable('dashboard');
@@ -51,11 +48,10 @@
       const categoriesResponse = await fetch(`${API_BASE}/categories`);
       const categoriesResult = await categoriesResponse.json();
       
-      // For demo purposes, we'll simulate other data with blueprint theme demo values
-      // In a real implementation, you'd have specific endpoints for dashboard stats
+      // For demo purposes, we'll simulate other data
       const data = {
-        totalPrompts: 47, // Demo data for blueprint theme
-        totalVersions: 156, // Demo data for blueprint theme
+        totalPrompts: 47, // Demo data
+        totalVersions: 156, // Demo data
         totalCategories: categoriesResult.success ? categoriesResult.count : 8,
         recentPrompts: [], // Would come from recent prompts API
         recentVersions: [], // Would come from recent versions API
@@ -97,14 +93,8 @@
   
   // Template builder save handler
   async function handleTemplateSave(templateData) {
-    // Here you would save the template to your backend
-    // For now, we'll just log it and show a success message
     console.log('Saving template:', templateData);
-    
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // After saving, you might want to refresh dashboard data
     await loadDashboardData();
   }
   
@@ -132,7 +122,7 @@
 </script>
 
 <div class="blueprint-dashboard blueprint-grid">
-  <!-- Blueprint Navigation Header -->
+  <!-- Blueprint Header with Technical Drawing Style -->
   <header class="blueprint-nav">
     <div class="header-content">
       <div class="brand-section">
@@ -149,8 +139,7 @@
         </div>
       </div>
       
-      <div class="nav-section">
-        <nav class="technical-nav">
+      <nav class="technical-nav">
         <button 
           class="blueprint-nav-item"
           class:active={$activeView === 'dashboard'}
@@ -182,16 +171,11 @@
         >
           Categories
         </button>
-        </nav>
-        
-        <div class="theme-selector-container">
-          <ThemeSelector />
-        </div>
-      </div>
+      </nav>
     </div>
   </header>
   
-  <!-- Blueprint Technical Drawing Area -->
+  <!-- Main Technical Drawing Area -->
   <main class="blueprint-workspace paper-surface">
     {#if $activeView === 'dashboard'}
       <!-- Technical Dashboard Layout -->
@@ -286,6 +270,46 @@
         
         <!-- Technical Specifications Grid -->
         <div class="specifications-grid">
+          <!-- Category Specifications -->
+          <section class="spec-panel blueprint-card">
+            <div class="blueprint-card-header">
+              <h2 class="section-title">Category Specifications</h2>
+              <button class="blueprint-button small" on:click={showCategoryManager}>
+                Configure
+              </button>
+            </div>
+            <div class="blueprint-card-content">
+              {#if $dashboardData.popularCategories.length > 0}
+                <div class="category-specifications">
+                  {#each $dashboardData.popularCategories as category}
+                    <div class="category-spec" style="border-left: 3px solid {category.color}">
+                      <div class="spec-header">
+                        <div class="spec-name">{category.name}</div>
+                        <div class="spec-indicator" style="background: {category.color}">
+                          {category.name.charAt(0)}
+                        </div>
+                      </div>
+                      {#if category.description}
+                        <div class="spec-description">{category.description}</div>
+                      {/if}
+                      <div class="spec-meta">
+                        <span class="spec-code">CAT-{category.name.toUpperCase().substring(0,3)}</span>
+                      </div>
+                    </div>
+                  {/each}
+                </div>
+              {:else}
+                <div class="empty-specification">
+                  <div class="empty-icon">📋</div>
+                  <p>No category specifications defined.</p>
+                  <button class="blueprint-button small" on:click={showCategoryManager}>
+                    Initialize Categories
+                  </button>
+                </div>
+              {/if}
+            </div>
+          </section>
+          
           <!-- Recent Activity Log -->
           <section class="spec-panel blueprint-card">
             <div class="blueprint-card-header">
@@ -322,46 +346,6 @@
                   <p>No recent activity to display.</p>
                   <button class="blueprint-button small primary" on:click={showTemplateBuilder}>
                     Create First Template
-                  </button>
-                </div>
-              {/if}
-            </div>
-          </section>
-          
-          <!-- Category Specifications -->
-          <section class="spec-panel blueprint-card">
-            <div class="blueprint-card-header">
-              <h2 class="section-title">Category Specifications</h2>
-              <button class="blueprint-button small" on:click={showCategoryManager}>
-                Configure
-              </button>
-            </div>
-            <div class="blueprint-card-content">
-              {#if $dashboardData.popularCategories.length > 0}
-                <div class="category-specifications">
-                  {#each $dashboardData.popularCategories as category}
-                    <div class="category-spec" style="border-left: 3px solid {category.color}">
-                      <div class="spec-header">
-                        <div class="spec-name">{category.name}</div>
-                        <div class="spec-indicator" style="background: {category.color}">
-                          {category.name.charAt(0)}
-                        </div>
-                      </div>
-                      {#if category.description}
-                        <div class="spec-description">{category.description}</div>
-                      {/if}
-                      <div class="spec-meta">
-                        <span class="spec-code">CAT-{category.name.toUpperCase().substring(0,3)}</span>
-                      </div>
-                    </div>
-                  {/each}
-                </div>
-              {:else}
-                <div class="empty-specification">
-                  <div class="empty-icon">📋</div>
-                  <p>No category specifications defined.</p>
-                  <button class="blueprint-button small" on:click={showCategoryManager}>
-                    Initialize Categories
                   </button>
                 </div>
               {/if}
@@ -506,20 +490,9 @@
     color: var(--blueprint-primary);
   }
   
-  .nav-section {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-  }
-  
   .technical-nav {
     display: flex;
     gap: 0;
-  }
-  
-  .theme-selector-container {
-    display: flex;
-    align-items: center;
   }
   
   .blueprint-workspace {

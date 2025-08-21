@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-blueprint">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenWebUI - Blueprint Theme - tojo.world</title>
+    
+    <!-- Blueprint Theme CSS -->
+    <link rel="stylesheet" href="/themes/blueprint/blueprint-theme.css">
+    <link rel="stylesheet" href="/themes/blueprint/blueprint-components.css">
+    
+    <!-- Blueprint Theme JavaScript -->
+    <script src="/themes/blueprint/blueprint-inject.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--paper-tertiary);
+            font-family: var(--font-body);
+        }
+        
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            background: var(--paper-tertiary);
+        }
+        
+        .blueprint-title-block {
+            background: var(--paper-base);
+            border: var(--border-weight-medium) solid var(--blueprint-primary);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl);
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .blueprint-title-block::before {
+            content: '';
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            width: 60px;
+            height: 40px;
+            border: var(--border-weight-thin) solid var(--blueprint-primary);
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                var(--line-grid) 2px,
+                var(--line-grid) 4px
+            );
+        }
+        
+        .title-main {
+            font-family: var(--font-technical);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--blueprint-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 var(--spacing-md) 0;
+        }
+        
+        .title-subtitle {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin: 0 0 var(--spacing-lg) 0;
+            line-height: 1.5;
+        }
+        
+        .blueprint-loading {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            color: var(--blueprint-primary);
+            font-family: var(--font-technical);
+            font-size: 14px;
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .blueprint-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--line-construction);
+            border-top: 2px solid var(--blueprint-primary);
+            border-radius: 50%;
+            animation: blueprint-spin 1s linear infinite;
+        }
+        
+        @keyframes blueprint-spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .technical-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: var(--spacing-sm) var(--spacing-md);
+            font-family: var(--font-technical);
+            font-size: 11px;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .info-label {
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            color: var(--blueprint-primary);
+            font-weight: 600;
+        }
+        
+        .tojo-watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-family: var(--font-technical);
+            font-size: 10px;
+            color: rgba(0, 61, 122, 0.6);
+            opacity: 0.6;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .openwebui-iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--paper-base);
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body class="blueprint-grid">
+    <div class="loading-container">
+        <div class="blueprint-title-block">
+            <h1 class="title-main">OpenWebUI Blueprint Theme</h1>
+            <p class="title-subtitle">
+                Technical drawing inspired interface for OpenWebUI, 
+                professionally deployed on tojo.world infrastructure.
+            </p>
+            
+            <div class="blueprint-loading">
+                <div class="blueprint-spinner"></div>
+                <span>Initializing OpenWebUI with Blueprint Theme...</span>
+            </div>
+            
+            <div class="technical-info">
+                <span class="info-label">Environment:</span>
+                <span class="info-value">tojo.world</span>
+                <span class="info-label">Theme:</span>
+                <span class="info-value">Blueprint v1.0</span>
+                <span class="info-label">Drawing No.:</span>
+                <span class="info-value">OWUI-THEME-001</span>
+                <span class="info-label">Status:</span>
+                <span class="info-value">ACTIVE</span>
+            </div>
+        </div>
+    </div>
+    
+    <iframe 
+        id="openwebui-frame" 
+        class="openwebui-iframe" 
+        src="http://localhost:3000"
+        title="OpenWebUI with Blueprint Theme">
+    </iframe>
+    
+    <div class="tojo-watermark">hosted on tojo.world</div>
+    
+    <script>
+        // Load OpenWebUI in iframe and apply theme
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎨 Loading OpenWebUI with Blueprint Theme for tojo.world');
+            
+            const iframe = document.getElementById('openwebui-frame');
+            const loadingContainer = document.querySelector('.loading-container');
+            
+            // Show iframe after a delay to let the theme load
+            setTimeout(() => {
+                iframe.style.display = 'block';
+                loadingContainer.style.display = 'none';
+                
+                // Try to apply theme to iframe content
+                iframe.onload = function() {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        
+                        // Add theme class to iframe
+                        iframeDoc.documentElement.classList.add('theme-blueprint');
+                        iframeDoc.body.classList.add('blueprint-grid');
+                        
+                        // Inject theme CSS
+                        const blueprintCSS = iframeDoc.createElement('link');
+                        blueprintCSS.rel = 'stylesheet';
+                        blueprintCSS.href = '/themes/blueprint/blueprint-theme.css';
+                        iframeDoc.head.appendChild(blueprintCSS);
+                        
+                        const blueprintComponentsCSS = iframeDoc.createElement('link');
+                        blueprintComponentsCSS.rel = 'stylesheet';
+                        blueprintComponentsCSS.href = '/themes/blueprint/blueprint-components.css';
+                        iframeDoc.head.appendChild(blueprintComponentsCSS);
+                        
+                        // Inject theme script
+                        const blueprintScript = iframeDoc.createElement('script');
+                        blueprintScript.src = '/themes/blueprint/blueprint-inject.js';
+                        iframeDoc.head.appendChild(blueprintScript);
+                        
+                        console.log('✅ Blueprint theme applied to OpenWebUI');
+                    } catch (e) {
+                        console.log('ℹ️ Cross-origin restrictions prevent direct theme injection, but theme is still available');
+                    }
+                };
+            }, 3000);
+        });
+        
+        // Initialize theme utilities
+        if (window.BlueprintTheme) {
+            window.BlueprintTheme.reinitialize();
+        }
+    </script>
+</body>
+</html>

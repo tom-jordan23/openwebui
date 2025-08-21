@@ -1,0 +1,423 @@
+/* 
+ * Blueprint Theme for OpenWebUI
+ * Inspired by Artifex Hackworth's technical precision
+ * Subtle tojo.world branding integration
+ */
+
+/* Custom Properties (CSS Variables) */
+:root {
+  /* Blueprint Color Palette */
+  --blueprint-primary: #003d7a;        /* Deep blueprint blue */
+  --blueprint-secondary: #0066cc;      /* Medium blueprint blue */
+  --blueprint-tertiary: #4da6ff;       /* Light blueprint blue */
+  --blueprint-accent: #ff6b35;         /* Technical orange accent */
+  
+  /* Paper/Background Colors */
+  --paper-base: #fefcf6;              /* Aged paper white */
+  --paper-secondary: #f8f6f0;          /* Slightly darker paper */
+  --paper-tertiary: #f0ede5;           /* Graph paper background */
+  
+  /* Technical Drawing Colors */
+  --line-primary: #003d7a;             /* Main drawing lines */
+  --line-secondary: #666a73;           /* Secondary/dimension lines */
+  --line-construction: #b8bcc8;        /* Construction/guide lines */
+  --line-grid: rgba(0, 61, 122, 0.1);  /* Grid lines */
+  
+  /* Text Colors */
+  --text-primary: #1a1d23;             /* Primary text */
+  --text-secondary: #4a5568;           /* Secondary text */
+  --text-tertiary: #718096;            /* Tertiary text */
+  --text-blueprint: #003d7a;           /* Blueprint-specific text */
+  
+  /* Technical Elements */
+  --border-weight-thin: 1px;
+  --border-weight-medium: 2px;
+  --border-weight-thick: 3px;
+  --grid-size: 20px;
+  --compass-size: 24px;
+  
+  /* Shadows & Effects */
+  --shadow-paper: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-elevation: 0 4px 12px rgba(0, 61, 122, 0.12);
+  --shadow-blueprint: 0 1px 3px rgba(0, 61, 122, 0.2);
+  
+  /* Typography */
+  --font-technical: 'Monaco', 'Consolas', 'Courier New', monospace;
+  --font-heading: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Spacing (based on grid system) */
+  --spacing-xs: calc(var(--grid-size) * 0.25);    /* 5px */
+  --spacing-sm: calc(var(--grid-size) * 0.5);     /* 10px */
+  --spacing-md: var(--grid-size);                 /* 20px */
+  --spacing-lg: calc(var(--grid-size) * 1.5);     /* 30px */
+  --spacing-xl: calc(var(--grid-size) * 2);       /* 40px */
+  --spacing-2xl: calc(var(--grid-size) * 3);      /* 60px */
+}
+
+/* Blueprint Grid Background Pattern */
+.blueprint-grid {
+  background-image: 
+    linear-gradient(var(--line-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-grid) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+}
+
+.blueprint-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(var(--line-construction) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-construction) 1px, transparent 1px);
+  background-size: calc(var(--grid-size) * 5) calc(var(--grid-size) * 5);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Technical Drawing Line Styles */
+.line-primary {
+  border-color: var(--line-primary);
+  border-width: var(--border-weight-medium);
+}
+
+.line-secondary {
+  border-color: var(--line-secondary);
+  border-width: var(--border-weight-thin);
+  border-style: dashed;
+}
+
+.line-construction {
+  border-color: var(--line-construction);
+  border-width: var(--border-weight-thin);
+  border-style: dotted;
+}
+
+/* Blueprint Paper Effect */
+.paper-surface {
+  background: var(--paper-base);
+  box-shadow: var(--shadow-paper);
+  position: relative;
+}
+
+.paper-surface::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(0, 61, 122, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 61, 122, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* tojo.world Compass Rose */
+.tojo-compass {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--compass-size);
+  height: var(--compass-size);
+  font-family: var(--font-technical);
+  font-size: 12px;
+  color: var(--blueprint-primary);
+  font-weight: 600;
+}
+
+.tojo-compass::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: var(--border-weight-thin) solid var(--blueprint-primary);
+  border-radius: 50%;
+  background: var(--paper-base);
+}
+
+.tojo-compass::after {
+  content: 'N';
+  position: absolute;
+  top: 2px;
+  font-size: 8px;
+  line-height: 1;
+  z-index: 1;
+}
+
+/* Domain watermark */
+.tojo-watermark {
+  position: fixed;
+  bottom: var(--spacing-sm);
+  right: var(--spacing-sm);
+  font-family: var(--font-technical);
+  font-size: 10px;
+  color: var(--line-construction);
+  opacity: 0.6;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Blueprint Card Styles */
+.blueprint-card {
+  background: var(--paper-base);
+  border: var(--border-weight-thin) solid var(--line-construction);
+  border-radius: 4px;
+  box-shadow: var(--shadow-blueprint);
+  position: relative;
+  overflow: hidden;
+}
+
+.blueprint-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg, 
+    var(--blueprint-primary) 0%, 
+    var(--blueprint-secondary) 50%, 
+    var(--blueprint-primary) 100%
+  );
+}
+
+.blueprint-card-header {
+  padding: var(--spacing-md);
+  border-bottom: var(--border-weight-thin) dashed var(--line-construction);
+  background: var(--paper-secondary);
+  position: relative;
+}
+
+.blueprint-card-content {
+  padding: var(--spacing-md);
+  background: var(--paper-base);
+}
+
+/* Technical Button Styles */
+.blueprint-button {
+  background: var(--paper-base);
+  border: var(--border-weight-medium) solid var(--blueprint-primary);
+  color: var(--blueprint-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-technical);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.blueprint-button:hover {
+  background: var(--blueprint-primary);
+  color: var(--paper-base);
+  box-shadow: var(--shadow-elevation);
+}
+
+.blueprint-button:active {
+  transform: translateY(1px);
+}
+
+.blueprint-button.primary {
+  background: var(--blueprint-primary);
+  color: var(--paper-base);
+}
+
+.blueprint-button.primary:hover {
+  background: var(--blueprint-secondary);
+}
+
+/* Technical Input Styles */
+.blueprint-input {
+  background: var(--paper-base);
+  border: var(--border-weight-thin) solid var(--line-secondary);
+  border-bottom: var(--border-weight-medium) solid var(--blueprint-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-technical);
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.blueprint-input:focus {
+  outline: none;
+  border-color: var(--blueprint-primary);
+  box-shadow: 0 2px 0 var(--blueprint-tertiary);
+}
+
+/* Navigation Styles */
+.blueprint-nav {
+  background: var(--paper-secondary);
+  border-bottom: var(--border-weight-medium) solid var(--blueprint-primary);
+  position: relative;
+}
+
+.blueprint-nav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--blueprint-primary) 0,
+    var(--blueprint-primary) 5px,
+    transparent 5px,
+    transparent 15px
+  );
+}
+
+.blueprint-nav-item {
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: var(--font-technical);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  border-right: var(--border-weight-thin) solid var(--line-construction);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.blueprint-nav-item:hover {
+  background: var(--paper-base);
+  color: var(--blueprint-primary);
+}
+
+.blueprint-nav-item.active {
+  background: var(--blueprint-primary);
+  color: var(--paper-base);
+  font-weight: 600;
+}
+
+.blueprint-nav-item.active::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--blueprint-accent);
+  border-radius: 50%;
+  border: 2px solid var(--paper-base);
+}
+
+/* Stats/Metrics Display */
+.blueprint-metric {
+  background: var(--paper-base);
+  border: var(--border-weight-thin) solid var(--line-construction);
+  border-left: var(--border-weight-thick) solid var(--blueprint-accent);
+  padding: var(--spacing-md);
+  position: relative;
+}
+
+.blueprint-metric-value {
+  font-family: var(--font-technical);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--blueprint-primary);
+  line-height: 1;
+  margin-bottom: var(--spacing-xs);
+}
+
+.blueprint-metric-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* Loading States */
+.blueprint-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--blueprint-primary);
+  font-family: var(--font-technical);
+  font-size: 12px;
+}
+
+.blueprint-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--line-construction);
+  border-top: 2px solid var(--blueprint-primary);
+  border-radius: 50%;
+  animation: blueprint-spin 1s linear infinite;
+}
+
+@keyframes blueprint-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Technical Drawing Arrows */
+.blueprint-arrow {
+  position: relative;
+  display: inline-block;
+  font-size: 0;
+}
+
+.blueprint-arrow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid var(--blueprint-primary);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  :root {
+    --grid-size: 16px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+  }
+  
+  .blueprint-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 12px;
+  }
+  
+  .tojo-watermark {
+    display: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .blueprint-grid {
+    background: none;
+  }
+  
+  .blueprint-card {
+    box-shadow: none;
+    border: var(--border-weight-thin) solid var(--line-primary);
+  }
+  
+  .tojo-watermark {
+    display: block;
+    position: fixed;
+    bottom: 10mm;
+    right: 10mm;
+  }
+}
